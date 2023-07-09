@@ -8,6 +8,7 @@
 	import { Label } from '$components/ui/label';
 	import { RadioGroupItem, RadioGroup } from '$components/ui/radio-group';
 	import { Checkbox } from '$components/ui/checkbox';
+	import { base } from '$app/paths';
 
 	let isLinkValid = true;
 	let showInvalidLinkAlert = false;
@@ -36,10 +37,9 @@
 			showInvalidLinkAlert = false;
 		}
 		if (selectedWebsite.toLowerCase() === 'soundcloud') {
-			format='mp3'
-		}
-		else {
-			format='mp4'
+			format = 'mp3';
+		} else {
+			format = 'mp4';
 		}
 	}
 
@@ -51,14 +51,17 @@
 		}
 	};
 
-	let selectedWebsite: string = 'Youtube';
-	let link: string = '';
-	let format: string = 'mp4';
+	let selectedWebsite = 'Youtube';
+	let link = '';
+	let format = 'mp4';
 
 	const download = async () => {
-		const response = await fetch(`/api/download?url=${encodeURIComponent(link)}&format=${format}`, {
-			method: 'GET'
-		});
+		const response = await fetch(
+			`${base}/api/download?url=${encodeURIComponent(link)}&format=${format}`,
+			{
+				method: 'GET'
+			}
+		);
 		if (response.ok) {
 			const { downloadLink, title } = await response.json();
 			const a = document.createElement('a');
@@ -103,7 +106,7 @@
 					</label>
 				</div>
 			{/if}
-			{#if selectedWebsite === 'youtube' | 'twitch' | 'kick' | 'tiktok'}
+			{#if (selectedWebsite === 'youtube') | 'twitch' | 'kick' | 'tiktok'}
 				<div class="flex items-center space-x-2 justify-start pt-4">
 					<RadioGroup bind:value={format}>
 						<div class="flex items-center space-x-2">
