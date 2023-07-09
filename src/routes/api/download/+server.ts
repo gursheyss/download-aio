@@ -54,13 +54,17 @@ export const GET: RequestHandler = async ({ request }) => {
 		options = {
 			extractAudio: true,
 			audioFormat: 'mp3',
-			output: outputPath
+			output: outputPath,
+			embedThumbnail: true,
+			addMetadata: true
 		};
 	} else if (format === 'mp4') {
 		options = {
 			format: 'bestvideo[height<=1080]+bestaudio/best[height<=1080]',
 			output: outputPath,
-			mergeOutputFormat: 'mp4'
+			mergeOutputFormat: 'mp4',
+			embedThumbnail: true,
+			addMetadata: true
 		};
 	}
 
