@@ -1,11 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import download from 'youtube-dl-exec';
 import { createReadStream, unlinkSync, readdirSync, mkdirSync, rmdirSync } from 'fs';
-import {
-	S3Client,
-	PutObjectCommand,
-	GetObjectCommand,
-} from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import dotenv from 'dotenv';
 import path from 'path';
