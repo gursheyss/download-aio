@@ -38,7 +38,7 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           source: build/
-          target: root/Download-AIO/build
+          target: Download-AIO/build
           overwrite: true
 
       - name: SSH into server and run command
@@ -48,7 +48,7 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
-            cd root/Download-AIO
+            cd Download-AIO
             tmux attach -t 6
             C-c 
             node -r dotenv/config ./build
