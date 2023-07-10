@@ -1,6 +1,6 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import download from 'youtube-dl-exec';
-import { createReadStream, unlinkSync } from 'fs';
+import { createReadStream, unlinkSync, readdirSync, mkdirSync, rmdirSync } from 'fs';
 import {
 	S3Client,
 	PutObjectCommand,
@@ -8,6 +8,8 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import dotenv from 'dotenv';
+import path from 'path';
+
 dotenv.config();
 
 const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
@@ -21,10 +23,12 @@ if (!accessKeyId || !secretAccessKey) {
 const s3Client = new S3Client({
 	region: 'us-east-1',
 	credentials: {
-		accessKeyId: accessKeyId,
-		secretAccessKey: secretAccessKey
+		accessKeyId,
+		secretAccessKey
 	}
 });
+
+const TEMP_DIR = './tmp';
 
 export const GET: RequestHandler = async ({ request }) => {
 	const url = new URL(request.url);
@@ -39,51 +43,54 @@ export const GET: RequestHandler = async ({ request }) => {
 		return new Response('Invalid format', { status: 400 });
 	}
 
-	const info = await download(link, {
-		dumpSingleJson: true
-	});
-
-	const sanitizedTitle = info.title.replace(/[\/\\%*|"<>]/g, '-'); //check title for anything that will mess up the directory
-	const outputPath = `${sanitizedTitle}.${format}`;
-
 	let options;
-
-	if (link)
-
 	if (format === 'mp3') {
 		options = {
 			extractAudio: true,
 			audioFormat: 'mp3',
-			output: outputPath,
 			embedThumbnail: true,
-			addMetadata: true
+			verbose: true,
+			preferFreeFormats: true,
+			noCheckCertificates: true,
+			output: path.join(TEMP_DIR, '%(title)s.%(ext)s')
 		};
 	} else if (format === 'mp4') {
 		options = {
 			format: 'bestvideo[height<=1080]+bestaudio/best[height<=1080]',
-			output: outputPath,
 			mergeOutputFormat: 'mp4',
 			embedThumbnail: true,
-			addMetadata: true
+			verbose: true,
+			output: path.join(TEMP_DIR, '%(title)s.%(ext)s')
 		};
 	}
 
-	console.log('starting download');
+	// Make temporary directory
+	mkdirSync(TEMP_DIR, { recursive: true });
 
 	await download(link, options);
 
-	const fileStream = createReadStream(outputPath);
+	// Read file name from temp directory
+	const filesInDir = readdirSync(TEMP_DIR);
+	if (!filesInDir.length) {
+		return new Response(JSON.stringify({ error: 'Download failed.' }), {
+			status: 500,
+			headers: { 'Content-Type': 'application/json' }
+		});
+	}
+
+	const filename = filesInDir[0];
+	const fileStream = createReadStream(path.join(TEMP_DIR, filename));
 
 	const uploadParams = new PutObjectCommand({
 		Bucket: bucketName,
-		Key: `${info.title}.${format}`,
+		Key: filename,
 		Body: fileStream,
 		ContentDisposition: 'attachment'
 	});
 
 	const getObjectCmd = new GetObjectCommand({
 		Bucket: bucketName,
-		Key: `${info.title}.${format}`
+		Key: filename
 	});
 
 	const deliveryUrl = await getSignedUrl(s3Client, getObjectCmd, { expiresIn: 3600 });
@@ -93,15 +100,24 @@ export const GET: RequestHandler = async ({ request }) => {
 		console.log(`File uploaded successfully at ${deliveryUrl}`);
 	} catch (err) {
 		console.log('Error', err);
-	} finally {
-		try {
-			unlinkSync(outputPath);
-		} catch (err) {
-			console.log('Error deleting the file: ', err);
-		}
+		return new Response(JSON.stringify({ error: 'An error occurred during processing.' }), {
+			status: 500,
+			headers: { 'Content-Type': 'application/json' }
+		});
 	}
 
-	return new Response(JSON.stringify({ downloadLink: deliveryUrl, title: info.title }), {
+	try {
+		unlinkSync(path.join(TEMP_DIR, filename));
+		rmdirSync(TEMP_DIR);
+	} catch (err) {
+		console.log('Error deleting the file: ', err);
+		return new Response(JSON.stringify({ error: 'An error occurred during processing.' }), {
+			status: 500,
+			headers: { 'Content-Type': 'application/json' }
+		});
+	}
+
+	return new Response(JSON.stringify({ downloadLink: deliveryUrl }), {
 		status: 200,
 		headers: { 'Content-Type': 'application/json' }
 	});
