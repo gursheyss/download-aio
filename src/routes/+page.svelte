@@ -12,10 +12,10 @@
 
 	let isLinkValid = true;
 	let showInvalidLinkAlert = false;
-	let error = '';
+	let errorMsg = '';
 	let showError = false;
 	let showProgress = false;
-	let title = '';
+	let showDownloading = false;
 
 	const sites = {
 		youtube:
@@ -56,21 +56,32 @@
 	let format = 'mp4';
 
 	const download = async () => {
-		const response = await fetch(
-			`${base}/api/download?url=${encodeURIComponent(link)}&format=${format}`,
-			{
-				method: 'GET'
+		try {
+			showDownloading = true
+			const response = await fetch(
+					`${base}/api/download?url=${encodeURIComponent(link)}&format=${format}`,
+					{
+						method: 'GET'
+					}
+			);
+			if (response.ok) {
+				const { downloadLink, title } = await response.json();
+				const a = document.createElement('a');
+				a.style.display = 'none';
+				a.href = downloadLink;
+				a.download = title;
+				document.body.appendChild(a);
+				a.click();
+				document.body.removeChild(a);
+			} else if (response.status === 500) {
+				const { error } = await response.json();
+				showError = true;
+				errorMsg = error;
 			}
-		);
-		if (response.ok) {
-			const { downloadLink, title } = await response.json();
-			const a = document.createElement('a');
-			a.style.display = 'none';
-			a.href = downloadLink;
-			a.download = title;
-			document.body.appendChild(a);
-			a.click();
-			document.body.removeChild(a);
+		} catch (err) {
+			showError = true;
+			errorMsg = 'Unexpected error occurred.'
+			console.log('Error: ', err);
 		}
 	};
 </script>
@@ -146,18 +157,18 @@
 						<AlertCircle class="h-4 w-4" />
 						<AlertTitle>Error</AlertTitle>
 						<AlertDescription>
-							{error}
+							{errorMsg}
 						</AlertDescription>
 					</Alert>
 				</div>
 			{/if}
-			{#if showError}
+			{#if showDownloading}
 				<div class="pt-4">
 					<Alert>
 						<AlertCircle class="h-4 w-4" />
 						<AlertTitle>Download Started</AlertTitle>
 						<AlertDescription>
-							Downloading {title}
+							Downloading requested media
 						</AlertDescription>
 					</Alert>
 				</div>
