@@ -77,6 +77,7 @@
 				a.click();
 				document.body.removeChild(a);
 			} else if (response.status === 500) {
+				showDownloading = false
 				const { error } = await response.json();
 				showError = true;
 				errorMsg = error;
