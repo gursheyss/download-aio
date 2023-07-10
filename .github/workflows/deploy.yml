@@ -49,6 +49,4 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             cd Download-AIO
-            tmux attach -t 6
-            C-c 
-            node -r dotenv/config ./build
+            pm2 start ecosystem.config.cjs
