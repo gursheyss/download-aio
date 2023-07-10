@@ -14,15 +14,14 @@
 	let showInvalidLinkAlert = false;
 	let errorMsg = '';
 	let showError = false;
-	let showProgress = false;
 	let showDownloading = false;
+	let watermarkToggle = false;
 
 	const sites = {
-		youtube:
-			/(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be\.com\/\S*(?:watch)?(?:\/|%3Fv=|v=)?)([a-zA-Z0-9_-]{6,11})/,
+		youtube: /(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be\.com\/\S*(?:watch)?(?:\/|%3Fv=|v=)?)([a-zA-Z0-9_-]{6,11})/,
 		twitch: /(?:https?:\/\/)?(?:www\.)?twitch\.tv/,
 		kick: /(?:https?:\/\/)?(?:www\.)?kick\.com/,
-		tiktok: /(?:https?:\/\/)?(?:www\.)?tiktok\.com\/@\w+\/video\/\d+/,
+		tiktok: /(?:https?:\/\/)?(?:www\.)?tiktok\.com/,
 		soundcloud: /(?:https?:\/\/)?(?:www\.)?soundcloud\.com\/[\w-]+\/[\w-]+/
 	};
 
@@ -59,7 +58,7 @@
 		try {
 			showDownloading = true
 			const response = await fetch(
-					`${base}/api/download?url=${encodeURIComponent(link)}&format=${format}`,
+					`${base}/api/download?url=${encodeURIComponent(link)}&format=${format}&watermark=${watermarkToggle}`,
 					{
 						method: 'GET'
 					}
@@ -117,7 +116,7 @@
 			</form>
 			{#if selectedWebsite === 'tiktok'}
 				<div class="flex items-center space-x-2 justify-start pt-4">
-					<Checkbox id="watermark" />
+					<Checkbox bind:checked={watermarkToggle} id="watermark" />
 					<label
 						for="watermark"
 						class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"

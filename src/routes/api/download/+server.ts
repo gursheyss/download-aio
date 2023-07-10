@@ -35,6 +35,7 @@ export const GET: RequestHandler = async ({ request }) => {
 	const url = new URL(request.url);
 	const link = url.searchParams.get('url');
 	const format = url.searchParams.get('format');
+	const watermark = url.searchParams.get('watermark') === 'true';
 
 	if (!link || !format) {
 		return new Response('Both url and format are required', { status: 400 });
@@ -56,13 +57,21 @@ export const GET: RequestHandler = async ({ request }) => {
 			output: path.join(TEMP_DIR, '%(title)s.%(ext)s')
 		};
 	} else if (format === 'mp4') {
-		options = {
-			format: 'bestvideo[height<=1080]+bestaudio/best[height<=1080]',
-			mergeOutputFormat: 'mp4',
-			embedThumbnail: true,
-			verbose: true,
-			output: path.join(TEMP_DIR, '%(title)s.%(ext)s')
-		};
+		if (watermark) {
+			options = {
+				format: 'best[format_note*=watermarked]',
+				mergeOutputFormat: 'mp4',
+				output: path.join(TEMP_DIR, '%(title)s.%(ext)s')
+			};
+		} else {
+			options = {
+				format: 'bestvideo[height<=1080]+bestaudio/best[height<=1080]',
+				mergeOutputFormat: 'mp4',
+				embedThumbnail: true,
+				verbose: true,
+				output: path.join(TEMP_DIR, '%(title)s.%(ext)s')
+			};
+		}
 	}
 
 	// Make temp directory
