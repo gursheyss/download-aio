@@ -12,6 +12,7 @@ import path from 'path';
 
 dotenv.config();
 
+//s3 init
 const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
 const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 const bucketName = process.env.BUCKET_NAME;
@@ -64,7 +65,7 @@ export const GET: RequestHandler = async ({ request }) => {
 		};
 	}
 
-	// Make temporary directory
+	// Make temp directory
 	mkdirSync(TEMP_DIR, { recursive: true });
 
 	await download(link, options);
