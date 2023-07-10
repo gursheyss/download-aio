@@ -32,10 +32,15 @@
 		showInvalidLinkAlert = !isLinkValid;
 	};
 
+	//check if link is valid
 	$: {
 		if (link !== '' && isLinkValid) {
 			showInvalidLinkAlert = false;
 		}
+	}
+
+	//make mp3 if soundcloud selected
+	$:  {
 		if (selectedWebsite.toLowerCase() === 'soundcloud') {
 			format = 'mp3';
 		} else {
@@ -43,6 +48,24 @@
 		}
 	}
 
+
+	//3 dot loading thing
+	let count = 0;
+	let downloadMessage = 'Downloading requested media';
+	let intervalId;
+	$: {
+		if (showDownloading) {
+			clearInterval(intervalId);
+			intervalId = setInterval(() => {
+				count = (count + 1) % 4;
+				downloadMessage = `Downloading requested media${'.'.repeat(count)}`;
+			}, 1000);
+		} else {
+			clearInterval(intervalId);
+		}
+	}
+
+	//download validation
 	const validateAndDownload = (event: Event) => {
 		event.preventDefault();
 		validateLink();
@@ -51,10 +74,12 @@
 		}
 	};
 
+	//default values
 	let selectedWebsite = 'Youtube';
 	let link = '';
 	let format = 'mp4';
 
+	//download function
 	const download = async () => {
 		try {
 			showDownloading = true;
@@ -77,7 +102,7 @@
 				a.click();
 				document.body.removeChild(a);
 			} else if (response.status === 500) {
-				showDownloading = false
+				showDownloading = false;
 				const { error } = await response.json();
 				showError = true;
 				errorMsg = error;
@@ -174,8 +199,7 @@
 						<AlertCircle class="h-4 w-4" />
 						<AlertTitle>Download Started</AlertTitle>
 						<AlertDescription>
-							Downloading requested media
-							<span class="dot1">.</span><span class="dot2">.</span><span class="dot3">.</span>
+							{downloadMessage}
 						</AlertDescription>
 					</Alert>
 				</div>
@@ -183,30 +207,3 @@
 		</div>
 	</section>
 </section>
-
-<style>
-	@keyframes ellipsis {
-		0% {
-			opacity: 0;
-		}
-		33% {
-			opacity: 1;
-		}
-		66% {
-			opacity: 0;
-		}
-		100% {
-			opacity: 0;
-		}
-	}
-
-	.dot1 {
-		animation: ellipsis 1.2s infinite;
-	}
-	.dot2 {
-		animation: ellipsis 1.2s infinite 0.2s;
-	}
-	.dot3 {
-		animation: ellipsis 1.2s infinite 0.4s;
-	}
-</style>
