@@ -1,13 +1,3 @@
-<style>
-	@media (max-width: 600px) {
-		section {
-			transform: scale(0.9);
-			transform-origin: top center;
-		}
-	}
-</style>
-
-
 <script lang="ts">
 	import { Button } from '$components/ui/button';
 	import { Download } from 'lucide-svelte';
