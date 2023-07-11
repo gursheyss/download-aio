@@ -3,7 +3,11 @@
 Download AIO is a robust, user-friendly application that allows you to download media from various platforms seamlessly.
 
 Supported Sites:
-- 
+- Youtube
+- Twitch
+- Twitter
+- Tiktok
+- Soundcloud
 
 Try it here https://gursheys.com/download-aio
 
