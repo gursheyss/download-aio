@@ -25,6 +25,7 @@
 			/(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be\.com\/\S*(?:watch)?(?:\/|%3Fv=|v=)?)([a-zA-Z0-9_-]{6,11})/,
 		twitch: /(?:https?:\/\/)?(?:www\.)?twitch\.tv/,
 		twitter: /(?:https?:\/\/)?(?:www\.)?twitter\.com\/[\w-]+\/[\w-]+/,
+		instagram: /(?:https?:\/\/)?(?:www\.)?instagram\.com\/[\w-]+\/[\w-]+/,
 		tiktok: /(?:https?:\/\/)?(?:www\.)?tiktok\.com/,
 		soundcloud: /(?:https?:\/\/)?(?:www\.)?soundcloud\.com\/[\w-]+\/[\w-]+/
 	};
@@ -55,6 +56,13 @@
 			selectedWebsite.toLowerCase() === 'twitter'
 		) {
 			watermarkToggle = false;
+		}
+	}
+
+	$: {
+		if (selectedWebsite) {
+			showInvalidLinkAlert = false;
+			showError = false;
 		}
 	}
 
@@ -148,15 +156,15 @@
 				{/each}
 			</TabsList>
 		</Tabs>
-		<div class="w-full dark">
-			<form class="flex items-center space-x-2 pt-4">
-				<Input bind:value={link} class="flex" type="link" placeholder="Enter link here" />
+		<div class="w-full flex items-center pt-4">
+			<form class="flex-grow flex items-center space-x-2 dark">
+				<Input bind:value={link} class="flex-grow" type="link" placeholder="Enter link here" />
 				<Button type="submit" on:click={validateAndDownload}
 					><Download class="mr-2 h-4 w-4" />Download</Button
 				>
 			</form>
 			{#if selectedWebsite === 'tiktok'}
-				<div class="flex items-center space-x-2 justify-start pt-4">
+				<div class="flex items-center space-x-2 justify-start pl-4 dark">
 					<Checkbox bind:checked={watermarkToggle} id="watermark" />
 					<label
 						for="watermark"
@@ -167,7 +175,7 @@
 				</div>
 			{/if}
 			{#if selectedWebsite === 'youtube' || selectedWebsite === 'twitter' || selectedWebsite === 'twitch'}
-				<div class="flex items-center space-x-2 justify-start pt-4">
+				<div class="flex items-center space-x-2 justify-start pl-3 dark">
 					<RadioGroup bind:value={format}>
 						<div class="flex items-center space-x-2">
 							<RadioGroupItem value="mp3" id="mp3" />
@@ -180,6 +188,8 @@
 					</RadioGroup>
 				</div>
 			{/if}
+		</div>
+		<div class="w-9/12 dark">
 			{#if showInvalidLinkAlert}
 				<div class="pt-4">
 					<Alert variant="destructive">
@@ -210,6 +220,15 @@
 						<AlertDescription>
 							{downloadMessage}
 						</AlertDescription>
+					</Alert>
+				</div>
+			{/if}
+			{#if selectedWebsite === 'instagram'}
+				<div class="pt-4">
+					<Alert>
+						<AlertCircle class="h-4 w-4" />
+						<AlertTitle>Note</AlertTitle>
+						<AlertDescription>Only reels are currently supported</AlertDescription>
 					</Alert>
 				</div>
 			{/if}
