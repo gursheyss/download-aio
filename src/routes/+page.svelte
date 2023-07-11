@@ -46,6 +46,9 @@
 		} else {
 			format = 'mp4';
 		}
+		if (selectedWebsite.toLowerCase() === 'youtube' || selectedWebsite.toLowerCase() === 'twitch' || selectedWebsite.toLowerCase() === 'twitter') {
+			watermarkToggle = false;
+		}
 	}
 
 	//3 dot loading thing
