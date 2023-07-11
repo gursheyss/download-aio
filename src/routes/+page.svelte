@@ -121,6 +121,9 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Download AIO</title>
+</svelte:head>
 <section class="flex flex-col items-center gap-2 px-4 pt-8 min-h-screen">
 	<h1 class="text-3xl font-bold leading-tight md:text-5xl lg:leading-[1.1]">
 		Download AIO
