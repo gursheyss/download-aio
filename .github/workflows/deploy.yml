@@ -38,7 +38,7 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           source: build/
-          target: Download-AIO/build
+          target: Download-AIO
           overwrite: true
 
       - name: SSH into server and run command
