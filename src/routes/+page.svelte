@@ -157,7 +157,7 @@
 					</label>
 				</div>
 			{/if}
-			{#if (selectedWebsite === 'youtube' || selectedWebsite === 'twitter' || selectedWebsite === 'twitch')}
+			{#if selectedWebsite === 'youtube' || selectedWebsite === 'twitter' || selectedWebsite === 'twitch'}
 				<div class="flex items-center space-x-2 justify-start pt-4">
 					<RadioGroup bind:value={format}>
 						<div class="flex items-center space-x-2">
