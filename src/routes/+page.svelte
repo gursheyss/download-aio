@@ -21,10 +21,9 @@
 		youtube:
 			/(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be\.com\/\S*(?:watch)?(?:\/|%3Fv=|v=)?)([a-zA-Z0-9_-]{6,11})/,
 		twitch: /(?:https?:\/\/)?(?:www\.)?twitch\.tv/,
-		kick: /(?:https?:\/\/)?(?:www\.)?kick\.com/,
 		twitter: /(?:https?:\/\/)?(?:www\.)?twitter\.com\/[\w-]+\/[\w-]+/,
 		tiktok: /(?:https?:\/\/)?(?:www\.)?tiktok\.com/,
-		soundcloud: /(?:https?:\/\/)?(?:www\.)?soundcloud\.com\/[\w-]+\/[\w-]+/,
+		soundcloud: /(?:https?:\/\/)?(?:www\.)?soundcloud\.com\/[\w-]+\/[\w-]+/
 	};
 
 	const validateLink = () => {
@@ -41,14 +40,13 @@
 	}
 
 	//make mp3 if soundcloud selected
-	$:  {
+	$: {
 		if (selectedWebsite.toLowerCase() === 'soundcloud') {
 			format = 'mp3';
 		} else {
 			format = 'mp4';
 		}
 	}
-
 
 	//3 dot loading thing
 	let count = 0;
@@ -159,7 +157,7 @@
 					</label>
 				</div>
 			{/if}
-			{#if (selectedWebsite === 'youtube') | 'twitch' | 'kick' | 'tiktok'}
+			{#if (selectedWebsite === 'youtube') | 'twitch' | 'tiktok'}
 				<div class="flex items-center space-x-2 justify-start pt-4">
 					<RadioGroup bind:value={format}>
 						<div class="flex items-center space-x-2">
