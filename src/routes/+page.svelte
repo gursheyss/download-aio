@@ -22,8 +22,9 @@
 			/(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be\.com\/\S*(?:watch)?(?:\/|%3Fv=|v=)?)([a-zA-Z0-9_-]{6,11})/,
 		twitch: /(?:https?:\/\/)?(?:www\.)?twitch\.tv/,
 		kick: /(?:https?:\/\/)?(?:www\.)?kick\.com/,
+		twitter: /(?:https?:\/\/)?(?:www\.)?twitter\.com\/[\w-]+\/[\w-]+/,
 		tiktok: /(?:https?:\/\/)?(?:www\.)?tiktok\.com/,
-		soundcloud: /(?:https?:\/\/)?(?:www\.)?soundcloud\.com\/[\w-]+\/[\w-]+/
+		soundcloud: /(?:https?:\/\/)?(?:www\.)?soundcloud\.com\/[\w-]+\/[\w-]+/,
 	};
 
 	const validateLink = () => {
@@ -82,6 +83,7 @@
 	//download function
 	const download = async () => {
 		try {
+			showError = false;
 			showDownloading = true;
 			const response = await fetch(
 				`${base}/api/download?url=${encodeURIComponent(
