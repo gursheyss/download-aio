@@ -16,6 +16,9 @@
 	let showError = false;
 	let showDownloading = false;
 	let watermarkToggle = false;
+	let selectedWebsite = 'youtube';
+	let link = '';
+	let format = 'mp4';
 
 	const sites = {
 		youtube:
@@ -46,7 +49,11 @@
 		} else {
 			format = 'mp4';
 		}
-		if (selectedWebsite.toLowerCase() === 'youtube' || selectedWebsite.toLowerCase() === 'twitch' || selectedWebsite.toLowerCase() === 'twitter') {
+		if (
+			selectedWebsite.toLowerCase() === 'youtube' ||
+			selectedWebsite.toLowerCase() === 'twitch' ||
+			selectedWebsite.toLowerCase() === 'twitter'
+		) {
 			watermarkToggle = false;
 		}
 	}
@@ -55,6 +62,7 @@
 	let count = 0;
 	let downloadMessage = 'Downloading requested media';
 	let intervalId;
+
 	$: {
 		if (showDownloading) {
 			clearInterval(intervalId);
@@ -75,11 +83,6 @@
 			download();
 		}
 	};
-
-	//default values
-	let selectedWebsite = '';
-	let link = '';
-	let format = 'mp4';
 
 	//download function
 	const download = async () => {
