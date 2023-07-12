@@ -23,7 +23,8 @@
 	const sites = {
 		youtube:
 			/(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be\.com\/\S*(?:watch)?(?:\/|%3Fv=|v=)?)([a-zA-Z0-9_-]{6,11})/,
-		twitch: /(?:https?:\/\/)?(?:www\.)?twitch\.tv/,
+		twitch:
+			/^(https?:\/\/)?((www\.)?twitch\.tv\/videos\/\d+|(www\.)?twitch\.tv\/[A-Za-z0-9_-]+\/clip\/[A-Za-z0-9_-]+|clips\.twitch\.tv\/[A-Za-z0-9_-]+)$/,
 		twitter: /(?:https?:\/\/)?(?:www\.)?twitter\.com\/[\w-]+\/[\w-]+/,
 		instagram: /(?:https?:\/\/)?(?:www\.)?instagram\.com\/[\w-]+\/[\w-]+/,
 		tiktok: /(?:https?:\/\/)?(?:www\.)?tiktok\.com/,
@@ -229,6 +230,15 @@
 						<AlertCircle class="h-4 w-4" />
 						<AlertTitle>Note</AlertTitle>
 						<AlertDescription>Only reels are currently supported</AlertDescription>
+					</Alert>
+				</div>
+			{/if}
+			{#if selectedWebsite === 'twitch'}
+				<div class="pt-4">
+					<Alert>
+						<AlertCircle class="h-4 w-4" />
+						<AlertTitle>Note</AlertTitle>
+						<AlertDescription>Only clips and VODs are currently supported</AlertDescription>
 					</Alert>
 				</div>
 			{/if}
