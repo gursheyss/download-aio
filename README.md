@@ -25,6 +25,7 @@ The following environment variables must be set:
 - `AWS_ACCESS_KEY_ID`: Access key associated with your AWS account
 - `AWS_SECRET_ACCESS_KEY`: Secret key associated with your AWS account
 - `BUCKET_NAME`: The name of the S3 bucket you wish to use for this project
+- `AWS_REIGON`: [Region](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html) of your S3 bucket
 
 ## Local Setup
 
