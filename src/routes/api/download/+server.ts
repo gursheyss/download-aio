@@ -8,22 +8,27 @@ import path from 'path';
 
 dotenv.config();
 
-//s3 init
-const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
-const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-const bucketName = process.env.BUCKET_NAME;
+function inits3() {
+	const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+	const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+	const bucketName = process.env.BUCKET_NAME;
 
-if (!accessKeyId || !secretAccessKey) {
-	throw new Error('AWS credentials are not set in environment variables.');
+	if (!accessKeyId || !secretAccessKey) {
+		throw new Error('AWS credentials are not set in environment variables.');
+	}
+
+	const s3Client = new S3Client({
+		region: process.env.AWS_REGION,
+		credentials: {
+			accessKeyId,
+			secretAccessKey
+		}
+	});
+	return {bucketName, s3Client};
 }
 
-const s3Client = new S3Client({
-	region: process.env.AWS_REGION,
-	credentials: {
-		accessKeyId,
-		secretAccessKey
-	}
-});
+//s3 init
+const {bucketName, s3Client} = inits3();
 
 const TEMP_DIR = './tmp';
 
@@ -42,33 +47,38 @@ export const GET: RequestHandler = async ({ request }) => {
 	}
 
 	let options;
-	if (format === 'mp3') {
-		options = {
-			extractAudio: true,
-			audioFormat: 'mp3',
-			embedThumbnail: true,
-			verbose: true,
-			preferFreeFormats: true,
-			noCheckCertificates: true,
-			output: path.join(TEMP_DIR, '%(title)s.%(ext)s')
-		};
-	} else if (format === 'mp4') {
-		if (watermark) {
+
+	function getOptions() {
+		if (format === 'mp3') {
 			options = {
-				format: 'best[format_note*=watermarked]',
-				mergeOutputFormat: 'mp4',
-				output: path.join(TEMP_DIR, '%(title)s.%(ext)s')
-			};
-		} else {
-			options = {
-				format: 'bestvideo[height<=1080]+bestaudio/best[height<=1080]',
-				mergeOutputFormat: 'mp4',
+				extractAudio: true,
+				audioFormat: 'mp3',
 				embedThumbnail: true,
 				verbose: true,
+				preferFreeFormats: true,
+				noCheckCertificates: true,
 				output: path.join(TEMP_DIR, '%(title)s.%(ext)s')
 			};
+		} else if (format === 'mp4') {
+			if (watermark) {
+				options = {
+					format: 'best[format_note*=watermarked]',
+					mergeOutputFormat: 'mp4',
+					output: path.join(TEMP_DIR, '%(title)s.%(ext)s')
+				};
+			} else {
+				options = {
+					format: 'bestvideo[height<=1080]+bestaudio/best[height<=1080]',
+					mergeOutputFormat: 'mp4',
+					embedThumbnail: true,
+					verbose: true,
+					output: path.join(TEMP_DIR, '%(title)s.%(ext)s')
+				};
+			}
 		}
 	}
+
+	getOptions();
 
 	// Make temp directory
 	mkdirSync(TEMP_DIR, { recursive: true });
