@@ -18,7 +18,7 @@ if (!accessKeyId || !secretAccessKey) {
 }
 
 const s3Client = new S3Client({
-	region: 'us-east-1',
+	region: process.env.AWS_REGION,
 	credentials: {
 		accessKeyId,
 		secretAccessKey
