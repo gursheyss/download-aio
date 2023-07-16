@@ -11,7 +11,7 @@ Supported Sites:
 - Tiktok
 - Soundcloud
 
-Try it here https://gursheys.com/download-aio
+Try it here https://gursheys.com/download
 
 ## Prerequisites
 
