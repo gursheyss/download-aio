@@ -24,11 +24,11 @@ function inits3() {
 			secretAccessKey
 		}
 	});
-	return {bucketName, s3Client};
+	return { bucketName, s3Client };
 }
 
 //s3 init
-const {bucketName, s3Client} = inits3();
+const { bucketName, s3Client } = inits3();
 
 const TEMP_DIR = './tmp';
 
