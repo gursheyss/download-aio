@@ -54,8 +54,6 @@ export const GET: RequestHandler = async ({ request }) => {
 				extractAudio: true,
 				audioFormat: 'mp3',
 				embedThumbnail: true,
-				verbose: true,
-				preferFreeFormats: true,
 				noCheckCertificates: true,
 				output: path.join(TEMP_DIR, '%(title)s.%(ext)s')
 			};
@@ -67,11 +65,14 @@ export const GET: RequestHandler = async ({ request }) => {
 					output: path.join(TEMP_DIR, '%(title)s.%(ext)s')
 				};
 			} else {
+				let embedThumbnailValue = true;
+				if (link && link.includes('rumble')) {
+					embedThumbnailValue = false;
+				}
 				options = {
 					format: 'bestvideo[height<=1080]+bestaudio/best[height<=1080]',
 					mergeOutputFormat: 'mp4',
-					embedThumbnail: true,
-					verbose: true,
+					embedThumbnail: embedThumbnailValue,
 					output: path.join(TEMP_DIR, '%(title)s.%(ext)s')
 				};
 			}
@@ -79,6 +80,7 @@ export const GET: RequestHandler = async ({ request }) => {
 	}
 
 	getOptions();
+
 
 	// Make temp directory
 	mkdirSync(TEMP_DIR, { recursive: true });
