@@ -21,14 +21,12 @@
 	let format = 'mp4';
 
 	const sites = {
-		youtube:
-			/(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be\.com\/\S*(?:watch)?(?:\/|%3Fv=|v=)?)([a-zA-Z0-9_-]{6,11})/,
+		youtube: /(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be\.com\/\S*(?:watch)?(?:\/|%3Fv=|v=)?)([a-zA-Z0-9_-]{6,11})/,
 		twitter: /(?:https?:\/\/)?(?:www\.)?twitter\.com\/[\w-]+\/[\w-]+/,
 		instagram: /(?:https?:\/\/)?(?:www\.)?instagram\.com\/[\w-]+\/[\w-]+/,
 		tiktok: /(?:https?:\/\/)?(?:www\.)?tiktok\.com/,
 		soundcloud: /(?:https?:\/\/)?(?:www\.)?soundcloud\.com\/[\w-]+\/[\w-]+/,
-		twitch:
-			/^(https?:\/\/)?((www\.)?twitch\.tv\/videos\/\d+|(www\.)?twitch\.tv\/[A-Za-z0-9_-]+\/clip\/[A-Za-z0-9_-]+|clips\.twitch\.tv\/[A-Za-z0-9_-]+)$/,
+		twitch: /^(https?:\/\/)?((www\.)?twitch\.tv\/videos\/\d+|(www\.)?twitch\.tv\/[A-Za-z0-9_-]+\/clip\/[A-Za-z0-9_-]+|clips\.twitch\.tv\/[A-Za-z0-9_-]+)$/,
 		rumble: /(?:https?:\/\/)?(?:www\.)?rumble\.com/
 	};
 
@@ -100,9 +98,7 @@
 			showError = false;
 			showDownloading = true;
 			const response = await fetch(
-				`${base}/api/download?url=${encodeURIComponent(
-					link
-				)}&format=${format}&watermark=${watermarkToggle}`,
+				`${base}/api/download?url=${encodeURIComponent(link)}&format=${format}&watermark=${watermarkToggle}`,
 				{
 					method: 'GET'
 				}
