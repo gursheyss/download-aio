@@ -5,11 +5,12 @@ Download AIO is a robust, user-friendly application that allows you to download 
 Supported Sites:
 
 - Youtube
-- Twitch (clips and VODs only)
 - Twitter
 - Instagram (reels only)
 - Tiktok
 - Soundcloud
+- Twitch (clips and VODs only)
+- Rumble
 
 Try it here https://gursheys.com/download-aio
 
