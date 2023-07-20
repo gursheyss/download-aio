@@ -14,6 +14,30 @@ Supported Sites:
 
 Try it here https://gursheys.com/download-aio
 
+## Diagram
+```mermaid
+sequenceDiagram
+    participant User as User (Frontend)
+    participant Svelte as Sveltekit (Frontend)
+    participant Server as Sveltekit (Backend)
+    participant YDL as youtube-dl-exec
+    participant FS as File System
+    participant S3 as AWS S3
+
+    User->>Svelte: Input (URL, format, watermark)
+    Svelte->>Server: Send Download Request (URL, format, watermark)
+    Server->>Server: Validate Request Parameters
+    Server->>YDL: Download File with specified options
+    YDL->>FS: Save File Locally in temp directory
+    FS-->>Server: File saved successfully
+    Server->>S3: Upload File to S3
+    S3-->>Server: Confirmation & Signed URL
+    Server->>FS: Delete Local File
+    FS-->>Server: File deleted successfully
+    Server->>Svelte: Respond with Signed URL
+    Svelte->>User: Start Download in User's Browser
+```
+
 ## Prerequisites
 
 To successfully deploy and run this project, you'll need to create an Amazon S3 bucket and set up your access keys. If you haven't done so yet, please follow the official AWS guides:
