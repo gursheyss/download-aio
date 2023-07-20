@@ -8,7 +8,9 @@ import path from 'path';
 
 dotenv.config();
 
-function inits3() {
+const TEMP_DIR = './tmp';
+
+function initS3() {
 	const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
 	const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 	const bucketName = process.env.BUCKET_NAME;
@@ -19,18 +21,62 @@ function inits3() {
 
 	const s3Client = new S3Client({
 		region: process.env.AWS_REGION,
-		credentials: {
-			accessKeyId,
-			secretAccessKey
-		}
+		credentials: { accessKeyId, secretAccessKey }
 	});
+
 	return { bucketName, s3Client };
 }
 
-//s3 init
-const { bucketName, s3Client } = inits3();
+function getOptions(format: string, watermark: boolean, link: string) {
+	let options = {};
 
-const TEMP_DIR = './tmp';
+	if (format === 'mp3') options = getMP3Options();
+	else if (format === 'mp4') options = getMP4Options(watermark, link);
+
+	return options;
+}
+
+function getMP3Options() {
+	return {
+		extractAudio: true,
+		audioFormat: 'mp3',
+		embedThumbnail: true,
+		noCheckCertificates: true,
+		output: path.join(TEMP_DIR, '%(title)s.%(ext)s')
+	};
+}
+
+function getMP4Options(watermark: boolean, link: string) {
+	let options;
+
+	if (watermark) options = getMP4WithWatermarkOptions();
+	else options = getMP4WithoutWatermarkOptions(link);
+
+	return options;
+}
+
+function getMP4WithWatermarkOptions() {
+	return {
+		format: 'best[format_note*=watermarked]',
+		mergeOutputFormat: 'mp4',
+		output: path.join(TEMP_DIR, '%(title)s.%(ext)s')
+	};
+}
+
+function getMP4WithoutWatermarkOptions(link: string) {
+	let embedThumbnailValue = true;
+	if (link && link.includes('rumble')) embedThumbnailValue = false;
+
+	return {
+		format: 'bestvideo[height<=1080]+bestaudio/best[height<=1080]',
+		mergeOutputFormat: 'mp4',
+		embedThumbnail: embedThumbnailValue,
+		output: path.join(TEMP_DIR, '%(title)s.%(ext)s')
+	};
+}
+
+//s3 init
+const { bucketName, s3Client } = initS3();
 
 export const GET: RequestHandler = async ({ request }) => {
 	const url = new URL(request.url);
@@ -38,56 +84,16 @@ export const GET: RequestHandler = async ({ request }) => {
 	const format = url.searchParams.get('format');
 	const watermark = url.searchParams.get('watermark') === 'true';
 
-	if (!link || !format) {
-		return new Response('Both url and format are required', { status: 400 });
-	}
+	if (!link || !format) return new Response('Both url and format are required', { status: 400 });
 
-	if (format !== 'mp4' && format !== 'mp3') {
-		return new Response('Invalid format', { status: 400 });
-	}
+	if (format !== 'mp4' && format !== 'mp3') return new Response('Invalid format', { status: 400 });
 
-	let options;
+	const options = getOptions(format, watermark, link);
 
-	function getOptions() {
-		if (format === 'mp3') {
-			options = {
-				extractAudio: true,
-				audioFormat: 'mp3',
-				embedThumbnail: true,
-				noCheckCertificates: true,
-				output: path.join(TEMP_DIR, '%(title)s.%(ext)s')
-			};
-		} else if (format === 'mp4') {
-			if (watermark) {
-				options = {
-					format: 'best[format_note*=watermarked]',
-					mergeOutputFormat: 'mp4',
-					output: path.join(TEMP_DIR, '%(title)s.%(ext)s')
-				};
-			} else {
-				let embedThumbnailValue = true;
-				if (link && link.includes('rumble')) {
-					embedThumbnailValue = false;
-				}
-				options = {
-					format: 'bestvideo[height<=1080]+bestaudio/best[height<=1080]',
-					mergeOutputFormat: 'mp4',
-					embedThumbnail: embedThumbnailValue,
-					output: path.join(TEMP_DIR, '%(title)s.%(ext)s')
-				};
-			}
-		}
-	}
-
-	getOptions();
-
-
-	// Make temp directory
 	mkdirSync(TEMP_DIR, { recursive: true });
 
 	await download(link, options);
 
-	// Read file name from temp directory
 	const filesInDir = readdirSync(TEMP_DIR);
 	if (!filesInDir.length) {
 		return new Response(JSON.stringify({ error: 'Download failed.' }), {
@@ -98,19 +104,13 @@ export const GET: RequestHandler = async ({ request }) => {
 
 	const filename = filesInDir[0];
 	const fileStream = createReadStream(path.join(TEMP_DIR, filename));
-
 	const uploadParams = new PutObjectCommand({
 		Bucket: bucketName,
 		Key: filename,
 		Body: fileStream,
 		ContentDisposition: 'attachment'
 	});
-
-	const getObjectCmd = new GetObjectCommand({
-		Bucket: bucketName,
-		Key: filename
-	});
-
+	const getObjectCmd = new GetObjectCommand({ Bucket: bucketName, Key: filename });
 	const deliveryUrl = await getSignedUrl(s3Client, getObjectCmd, { expiresIn: 3600 });
 
 	try {

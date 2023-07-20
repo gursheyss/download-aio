@@ -15,11 +15,12 @@ Supported Sites:
 Try it here https://gursheys.com/download-aio
 
 ## Diagram
+
 ```mermaid
 sequenceDiagram
     participant User as User (Frontend)
-    participant Svelte as Sveltekit (Frontend)
-    participant Server as Sveltekit (Backend)
+    participant Svelte as SvelteKit (Frontend)
+    participant Server as SvelteKit (Backend)
     participant YDL as youtube-dl-exec
     participant FS as File System
     participant S3 as AWS S3
