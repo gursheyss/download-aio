@@ -133,7 +133,7 @@
 </script>
 
 <svelte:head>
-	<title>Download AIO</title>
+	<title>Austere</title>
 </svelte:head>
 <section class="flex flex-col items-center gap-2 px-4 pt-8 min-h-screen">
 	<Title />

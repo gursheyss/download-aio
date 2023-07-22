@@ -1,6 +1,6 @@
-# Download AIO
+# Austere
 
-Download AIO is a robust, user-friendly application that allows you to download media from various platforms seamlessly.
+Austere is a robust, user-friendly application that allows you to download media from various platforms seamlessly.
 
 Supported Sites:
 
@@ -12,7 +12,7 @@ Supported Sites:
 - Twitch (clips and VODs only)
 - Rumble
 
-Try it here https://gursheys.com/download-aio
+Try it here https://gursheys.com/austere
 
 ## Diagram
 
@@ -58,8 +58,8 @@ The following environment variables must be set:
 To get started with the setup, clone the repository and navigate into the directory using the following commands:
 
 ```bash
-git clone https://github.com/gursheyss/download-aio
-cd download-aio
+git clone https://github.com/gursheyss/austere
+cd austere
 ```
 
 Once you're inside the project directory, install the project dependencies with:
