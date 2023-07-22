@@ -41,7 +41,7 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           source: build/
-          target: Download-AIO
+          target: Austere
           overwrite: true
 
       - name: SSH into server and run command
