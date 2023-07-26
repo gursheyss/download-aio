@@ -3,24 +3,22 @@ import download from 'youtube-dl-exec';
 import { createReadStream, unlinkSync, readdirSync, mkdirSync, rmdirSync } from 'fs';
 import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import dotenv from 'dotenv';
+import {AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, BUCKET_NAME} from "$env/static/private";
 import path from 'path';
-
-dotenv.config();
 
 const TEMP_DIR = './tmp';
 
 function initS3() {
-	const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
-	const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-	const bucketName = process.env.BUCKET_NAME;
+	const accessKeyId = AWS_ACCESS_KEY_ID;
+	const secretAccessKey = AWS_SECRET_ACCESS_KEY;
+	const bucketName = BUCKET_NAME;
 
 	if (!accessKeyId || !secretAccessKey) {
 		throw new Error('AWS credentials are not set in environment variables.');
 	}
 
 	const s3Client = new S3Client({
-		region: process.env.AWS_REGION,
+		region: AWS_REGION,
 		credentials: { accessKeyId, secretAccessKey }
 	});
 
