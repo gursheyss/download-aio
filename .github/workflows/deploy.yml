@@ -51,5 +51,5 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
-            cd Download-AIO
+            cd Austere
             pm2 start ecosystem.config.cjs
