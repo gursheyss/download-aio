@@ -1,6 +1,6 @@
-# Austere
+# downloadthing
 
-Austere is a robust, user-friendly application that allows you to download media from various platforms seamlessly.
+downloadthing is a robust, user-friendly application that allows you to download media from various platforms seamlessly.
 
 Supported Sites:
 
@@ -12,7 +12,7 @@ Supported Sites:
 - Twitch (clips and VODs only)
 - Rumble
 
-Try it here https://gursheys.com/austere
+Try it here https://gursheys.com/downloadthing
 
 ## Diagram
 
@@ -58,8 +58,8 @@ The following environment variables must be set:
 To get started with the setup, clone the repository and navigate into the directory using the following commands:
 
 ```bash
-git clone https://github.com/gursheyss/austere
-cd austere
+git clone https://github.com/gursheyss/downloadthing
+cd downloadthing
 ```
 
 Once you're inside the project directory, install the project dependencies with:
